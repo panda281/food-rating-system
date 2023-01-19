@@ -1,4 +1,4 @@
-# food-rating-system
+# Food Rating System
 
 to start the server first locate the server folder in the terminal by using the following command 'cd server' and insert the following commands in the terminal 'npm start'
 
@@ -209,5 +209,6 @@ HERE ARE THE DOCUMENTATION OF THE API
   * to link the API with the android app, first u need to edit the index.js file and post.js file that is located on the route folder.
   first your pc and the phone that the app is installed must be connected to the same wifi, then we need to copy the pc IPV4 address and replace the 'localhost' and '127.0.0.1' address.
   after that we can send request and recieve response from the android app by the pc IPV4 address 
+  * the database name must be saved as 'food_rating_system'
   
 
