@@ -1,6 +1,6 @@
 const config = {
     user: "root",
-    password: "panda@123",
+    password: "******",
     host: "127.0.0.1",
     database: "food_rating_system",
     waitForConnections: true,
