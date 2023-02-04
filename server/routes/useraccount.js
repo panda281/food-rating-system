@@ -100,7 +100,7 @@ router.put("/updateuseraccountuser", middleware, async (req, res) => {
 
 
 
-  router.post("/checkforuser", middleware, async (req, res) => {
+  router.post("/checkforuser", async (req, res) => {
     const connection = await pool.getConnection((err, conn) => {
       if (err) {
         res.json(err);
@@ -134,7 +134,7 @@ router.put("/updateuseraccountuser", middleware, async (req, res) => {
     }
   });
 
-  router.post("/checkforadmin", middleware, async (req, res) => {
+  router.post("/checkforadmin", async (req, res) => {
     const connection = await pool.getConnection((err, conn) => {
       if (err) {
         res.json(err);
