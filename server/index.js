@@ -2,6 +2,7 @@ const config = require("./config/config");
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const conn = mysql.createPool(config);
@@ -27,6 +28,13 @@ app.use("/rate", rate);
 const useraccount = require("./routes/useraccount");
 app.use("/useraccount", useraccount);
 
+const restaurant = require("./routes/restaurant");
+app.use("/restaurant", restaurant);
+
+
+
 app.listen(5000,"127.0.0.1", () => {
   console.log("running on port 5000");
+ 
+
 });

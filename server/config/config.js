@@ -2,7 +2,7 @@ const config = {
     user: "root",
     password: "panda@123",
     host: "127.0.0.1",
-    database: "food_rating_system",
+    database: "food_rating_system_v2",
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,

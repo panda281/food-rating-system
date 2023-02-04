@@ -4,6 +4,7 @@ const p = require("../index");
 const pool = p.createconn;
 const path = require('path');
 const multer = require('multer');
+const middleware = require('../middleware/authenticateToken').authenticateToken;
 
 const storage = multer.diskStorage({
     destination: (req,file,cb)=>{
@@ -15,7 +16,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({storage:storage});
 
-router.post("/addpost",upload.single("image"), async (req, res) => {
+router.post("/addpost",middleware,upload.single("image"), async (req, res) => {
   const connection = await pool.getConnection((err, conn) => {
     if (err) {
       res.json(err);
@@ -26,12 +27,13 @@ router.post("/addpost",upload.single("image"), async (req, res) => {
     const image = req.file.filename;
     const post_name = req.body.post_name;
     const description = req.body.description;
+    const restaurant_name = req.body.restaurant_name;
   
 
     // res.json(fileUrl);
     const result = await connection.query(
-      "INSERT INTO post(post_name,post_image,post_description) VALUES (?,?,?);",
-      [post_name,image,description]
+      "INSERT INTO post(post_name,post_image,post_description,restaurant_name ) VALUES (?,?,?,?);",
+      [post_name,image,description,restaurant_name]
     );
     res.json(result[0].affectedRows);
   } catch (err) {
@@ -50,7 +52,7 @@ router.post("/addpost",upload.single("image"), async (req, res) => {
 // });
 
 
-router.put("/updatepost",upload.single("image"), async (req, res) => {
+router.put("/updatepost",middleware, upload.single("image"), async (req, res) => {
     const connection = await pool.getConnection((err, conn) => {
       if (err) {
         res.json(err);
@@ -61,10 +63,11 @@ router.put("/updatepost",upload.single("image"), async (req, res) => {
       const image = req.file.filename;
       const post_name = req.body.post_name;
       const description = req.body.description;
+      const restaurant_name = req.body.restaurant_name;
 
       const result = await connection.query(
-        "UPDATE post SET post_name = ?, post_image = ?, post_description = ? WHERE post_id = ?",
-        [post_name, image, description, post_id]
+        "UPDATE post SET post_name = ?, post_image = ?, post_description = ?, restaurant_name = ? WHERE post_id = ?",
+        [post_name, image, description, post_id, restaurant_name]
 
       );
       res.json(result[0].changedRows);
@@ -75,8 +78,9 @@ router.put("/updatepost",upload.single("image"), async (req, res) => {
     }
   });
 
+ 
 
-  router.get("/listallpost", async (req, res) => {
+  router.get("/listallpost", middleware,async (req, res) => {
     const connection = await pool.getConnection((err, conn) => {
       if (err) {
         res.json(err);
@@ -105,16 +109,16 @@ router.put("/updatepost",upload.single("image"), async (req, res) => {
     }
   });
 
-  router.post("/favpost", async (req, res) => {
+  router.post("/favpost", middleware, async (req, res) => {
     const connection = await pool.getConnection((err, conn) => {
       if (err) {
         res.json(err);
       }
     });
     try {
-      const user_id = req.body.user_id;
+      const user_id = req.body.id;
       const result = await connection.query(
-        "select post.post_id, rate_number as rate, post_name, post_image, post_description,post_date from  rate inner join post on rate.post_id = post.post_id and rate.user_id = ?;",
+        "select post.post_id, rate_number as rate, post_name, post_image, post_description,post_date, restaurant_name from  rate inner join post on rate.post_id = post.post_id and rate.user_id = ?;",
         [user_id]
       );
 
@@ -136,7 +140,7 @@ router.put("/updatepost",upload.single("image"), async (req, res) => {
     }
   });
 
-  router.post("/searchpost", async (req, res) => {
+  router.post("/searchpost", middleware, async (req, res) => {
     const connection = await pool.getConnection((err, conn) => {
       if (err) {
         res.json(err);
@@ -166,7 +170,7 @@ router.put("/updatepost",upload.single("image"), async (req, res) => {
     }
   });
 
-  router.delete("/deletepost", async (req, res) => {
+  router.delete("/deletepost", middleware, async (req, res) => {
     const connection = await pool.getConnection((err, conn) => {
       if (err) {
         res.json(err);

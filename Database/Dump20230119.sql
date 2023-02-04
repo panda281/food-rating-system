@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.29, for Win64 (x86_64)
 --
--- Host: localhost    Database: food_rating_system
+-- Host: localhost    Database: food_rating_system_v2
 -- ------------------------------------------------------
 -- Server version	8.0.27
 
@@ -26,10 +26,18 @@ CREATE TABLE `admin` (
   `admin_id` int NOT NULL AUTO_INCREMENT,
   `admin_fname` varchar(45) NOT NULL,
   `admin_lname` varchar(45) NOT NULL,
-  `admin_email` varchar(45) NOT NULL,
   PRIMARY KEY (`admin_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `admin`
+--
+
+LOCK TABLES `admin` WRITE;
+/*!40000 ALTER TABLE `admin` DISABLE KEYS */;
+/*!40000 ALTER TABLE `admin` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `post`
@@ -44,9 +52,21 @@ CREATE TABLE `post` (
   `post_image` varchar(45) NOT NULL,
   `post_description` varchar(255) NOT NULL,
   `post_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`post_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `restaurant_name` varchar(45) NOT NULL,
+  PRIMARY KEY (`post_id`),
+  KEY `fk_restaurant_idx` (`restaurant_name`),
+  CONSTRAINT `fk_restaurant` FOREIGN KEY (`restaurant_name`) REFERENCES `restaurant` (`restaurant_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `post`
+--
+
+LOCK TABLES `post` WRITE;
+/*!40000 ALTER TABLE `post` DISABLE KEYS */;
+/*!40000 ALTER TABLE `post` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `rate`
@@ -65,8 +85,41 @@ CREATE TABLE `rate` (
   KEY `fk_post_idx` (`post_id`),
   CONSTRAINT `fk_post` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`),
   CONSTRAINT `fk_users` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `rate`
+--
+
+LOCK TABLES `rate` WRITE;
+/*!40000 ALTER TABLE `rate` DISABLE KEYS */;
+/*!40000 ALTER TABLE `rate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `restaurant`
+--
+
+DROP TABLE IF EXISTS `restaurant`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `restaurant` (
+  `restaurant_name` varchar(45) NOT NULL,
+  `restaurant_location` varchar(100) NOT NULL,
+  `restaurant_image` varchar(100) NOT NULL,
+  PRIMARY KEY (`restaurant_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `restaurant`
+--
+
+LOCK TABLES `restaurant` WRITE;
+/*!40000 ALTER TABLE `restaurant` DISABLE KEYS */;
+/*!40000 ALTER TABLE `restaurant` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `user`
@@ -79,10 +132,18 @@ CREATE TABLE `user` (
   `user_id` int NOT NULL AUTO_INCREMENT,
   `user_fname` varchar(45) NOT NULL,
   `user_lname` varchar(45) NOT NULL,
-  `user_email` varchar(45) NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `useraccount`
@@ -92,12 +153,13 @@ DROP TABLE IF EXISTS `useraccount`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `useraccount` (
-  `username` varchar(45) NOT NULL,
+  `email` varchar(45) NOT NULL,
   `password` varchar(45) NOT NULL,
   `usertype` varchar(45) NOT NULL,
   `admin_id` int DEFAULT NULL,
   `user_id` int DEFAULT NULL,
-  PRIMARY KEY (`username`),
+  PRIMARY KEY (`email`),
+  UNIQUE KEY `email_UNIQUE` (`email`),
   KEY `fk_admin_idx` (`admin_id`),
   KEY `fk_user_idx` (`user_id`),
   CONSTRAINT `fk_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`),
@@ -106,11 +168,20 @@ CREATE TABLE `useraccount` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping events for database 'food_rating_system'
+-- Dumping data for table `useraccount`
+--
+
+LOCK TABLES `useraccount` WRITE;
+/*!40000 ALTER TABLE `useraccount` DISABLE KEYS */;
+/*!40000 ALTER TABLE `useraccount` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping events for database 'food_rating_system_v2'
 --
 
 --
--- Dumping routines for database 'food_rating_system'
+-- Dumping routines for database 'food_rating_system_v2'
 --
 /*!50003 DROP PROCEDURE IF EXISTS `check_rating` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -147,13 +218,13 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `check_useraccount_admin`(in usernamee varchar(45), in passwordd varchar(45))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `check_useraccount_admin`(in emaile varchar(45), in passwordd varchar(45))
 BEGIN
-if((select count(*) from useraccount where username = usernamee and password = passwordd and usertype = 'admin')=0)
+if((select count(*) from useraccount where email = emaile and password = passwordd and usertype = 'admin')=0)
 then
 select 0 as admin_id;
 else
-select admin_id from useraccount where username = usernamee and password = passwordd and user_type = 'admin';
+select admin_id from useraccount where email = emaile and password = passwordd and user_type = 'admin';
 end if;
 END ;;
 DELIMITER ;
@@ -171,13 +242,13 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `check_useraccount_user`(in usernamee varchar(45), in passwordd varchar(45))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `check_useraccount_user`(in emaile varchar(45), in passwordd varchar(45))
 BEGIN
-if((select count(*) from useraccount where username = usernamee and password = passwordd and usertype = 'user')=0)
+if((select count(*) from useraccount where email = emaile and password = passwordd and usertype = 'user')=0)
 then
 select 0 as user_id;
 else
-select user_id from useraccount where username = usernamee and password = passwordd and user_type = 'user';
+select user_id from useraccount where email = emaile and password = passwordd and user_type = 'user';
 end if;
 END ;;
 DELIMITER ;
@@ -201,10 +272,10 @@ declare y int;
 set y = (select count(*) from rate where post_id = xx);
 if(y > 0)
 then 
-select post.post_id, CAST(ifnull(sum(rate_number)/count(rate_number),0) as DECIMAL(2,1) ) as rate, post_name, post_image, post_description from  rate inner join post on rate.post_id = post.post_id and post.post_id = xx;
+select post.post_id, CAST(ifnull(sum(rate_number)/count(rate_number),0) as DECIMAL(2,1) ) as rate, post_name, post_image, post_description, post_date, restaurant_name from  rate inner join post on rate.post_id = post.post_id and post.post_id = xx;
 
 else
-select post.post_id, 0.0 as rate, post_name, post_image, post_description from  post where post_id = xx;
+select post.post_id, 0.0 as rate, post_name, post_image, post_description, post_date, restaurant_name from  post where post_id = xx;
   end if;
 END ;;
 DELIMITER ;
@@ -235,7 +306,8 @@ Create TEMPORARY TABLE post_with_rate(
 	post_name varchar(45) not null,
 	post_image varchar(100) not null,
 	post_description varchar(255) not null,
-	post_date TIMESTAMP not null
+	post_date TIMESTAMP not null,
+    restaurant_name varchar(45) not null
 );
 looop: while z <=y
 do
@@ -248,10 +320,10 @@ else
 set x= (select count(*) from rate where post_id = z);
 if(x > 0)
 then 
-insert into post_with_rate(post_id, rate,post_name,post_image,post_description, post_date)  select post.post_id, CAST(ifnull(sum(rate_number)/count(rate_number),0) as DECIMAL(2,1) ) as rate, post_name, post_image, post_description,post_date from  rate inner join post on rate.post_id = post.post_id and post.post_id = z;
+insert into post_with_rate(post_id, rate,post_name,post_image,post_description, post_date, restaurant_name)  select post.post_id, CAST(ifnull(sum(rate_number)/count(rate_number),0) as DECIMAL(2,1) ) as rate, post_name, post_image, post_description,post_date,restaurant_name from  rate inner join post on rate.post_id = post.post_id and post.post_id = z;
 
 else
-insert into post_with_rate(post_id, rate,post_name,post_image,post_description, post_date)  select post.post_id, 0.0 as rate, post_name, post_image, post_description,post_date from  post where post_id = z;
+insert into post_with_rate(post_id, rate,post_name,post_image,post_description, post_date, restaurant_name)  select post.post_id, 0.0 as rate, post_name, post_image, post_description,post_date,restaurant_name from  post where post_id = z;
 
   end if;
 
@@ -283,10 +355,10 @@ declare y int;
 set y = (select count(*) from rate where post_id = xx);
 if(y > 0)
 then 
-select post.post_id, CAST(ifnull(sum(rate_number)/count(rate_number),0) as DECIMAL(2,1) ) as rate, post_name, post_image, post_description from  rate inner join post on rate.post_id = post.post_id and post.post_id = xx;
+select post.post_id, CAST(ifnull(sum(rate_number)/count(rate_number),0) as DECIMAL(2,1) ) as rate, post_name, post_image, post_description, post_date, restaurant_name from  rate inner join post on rate.post_id = post.post_id and post.post_id = xx;
 
 else
-select post.post_id, 0.0 as rate, post_name, post_image, post_description from  post where post_id = xx;
+select post.post_id, 0.0 as rate, post_name, post_image, post_description, post_date, restaurant_name from  post where post_id = xx;
   end if;
 END ;;
 DELIMITER ;
@@ -304,4 +376,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-01-19 21:15:36
+-- Dump completed on 2023-02-04 13:42:27

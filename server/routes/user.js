@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const p = require("../index");
 const pool = p.createconn;
+const middleware = require('../middleware/authenticateToken').authenticateToken;
 
-router.post("/adduser", async (req, res) => {
+router.post("/adduser", middleware, async (req, res) => {
   const connection = await pool.getConnection((err, conn) => {
     if (err) {
       res.json(err);
@@ -13,11 +14,11 @@ router.post("/adduser", async (req, res) => {
    
     const fname = req.body.fname;
     const lname = req.body.lname;
-    const email = req.body.email;
+
 
     const result = await connection.query(
-      "INSERT INTO user(user_fname,user_lname,user_email) VALUES (?,?,?);",
-      [fname,lname,email]
+      "INSERT INTO user(user_fname,user_lname) VALUES (?,?);",
+      [fname,lname]
     );
     res.json(result[0].insertId);
   } catch (err) {
@@ -28,19 +29,19 @@ router.post("/adduser", async (req, res) => {
 });
 
 
-router.put("/updateuser", async (req, res) => {
+router.put("/updateuser", middleware, async (req, res) => {
     const connection = await pool.getConnection((err, conn) => {
       if (err) {
         res.json(err);
       }
     });
     try {
-      const user_id = req.body.user_id;
+      const user_id = req.body.id;
       const fname = req.body.fname;
       const lname = req.body.lname;
-      const email = req.body.email;
+    
       const result = await connection.query(
-        "UPDATE user SET user_fname = ?, user_lname = ?, user_email = ? WHERE user_id = ?",
+        "UPDATE user SET user_fname = ?, user_lname = ? WHERE user_id = ?",
         [fname, lname, email, user_id]
 
       );
@@ -91,14 +92,14 @@ router.put("/updateuser", async (req, res) => {
   //   }
   // });
 
-  router.delete("/deleteuser", async (req, res) => {
+  router.delete("/deleteuser", middleware, async (req, res) => {
     const connection = await pool.getConnection((err, conn) => {
       if (err) {
         res.json(err);
       }
     });
     try {
-      const user_id = req.body.user_id;
+      const user_id = req.body.id;
       const result = await connection.query(
         "delete from user where user_id = ?;",
         [user_id]

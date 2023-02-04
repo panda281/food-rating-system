@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const p = require("../index");
 const pool = p.createconn;
+const middleware = require('../middleware/authenticateToken').authenticateToken;
 
-router.post("/addrate", async (req, res) => {
+router.post("/addrate",middleware, async (req, res) => {
   const connection = await pool.getConnection((err, conn) => {
     if (err) {
       res.json(err);
@@ -11,7 +12,7 @@ router.post("/addrate", async (req, res) => {
   });
   try {
     const rate_number = req.body.rate_number;
-    const user_id = req.body.user_id;
+    const user_id = req.body.id;
     const post_id = req.body.post_id;
 
     const result = await connection.query(
@@ -27,7 +28,7 @@ router.post("/addrate", async (req, res) => {
 });
 
 
-router.put("/updaterate", async (req, res) => {
+router.put("/updaterate", middleware, async (req, res) => {
     const connection = await pool.getConnection((err, conn) => {
       if (err) {
         res.json(err);
@@ -35,7 +36,7 @@ router.put("/updaterate", async (req, res) => {
     });
     try {
       const rate_number = req.body.rate_number;
-      const user_id = req.body.user_id;
+      const user_id = req.body.id;
       const post_id = req.body.post_id;
       const result = await connection.query(
         "UPDATE rate SET rate_number = ? WHERE user_id = ? and post_id = ?",
@@ -69,14 +70,14 @@ router.put("/updaterate", async (req, res) => {
   //   }
   // });
 
-  router.post("/searchrate", async (req, res) => {
+  router.post("/searchrate", middleware, async (req, res) => {
     const connection = await pool.getConnection((err, conn) => {
       if (err) {
         res.json(err);
       }
     });
     try {
-      const user_id = req.body.user_id;
+      const user_id = req.body.id;
       const post_id = req.body.post_id;
       const result = await connection.query(
         "call check_rating(?,?)",
@@ -90,14 +91,14 @@ router.put("/updaterate", async (req, res) => {
     }
   });
 
-  router.delete("/deleterate", async (req, res) => {
+  router.delete("/deleterate", middleware, async (req, res) => {
     const connection = await pool.getConnection((err, conn) => {
       if (err) {
         res.json(err);
       }
     });
     try {
-      const user_id = req.body.user_id;
+      const user_id = req.body.id;
       const post_id = req.body.post_id;
       const result = await connection.query(
         "delete from rate where user_id = ? and post_id = ?;",
